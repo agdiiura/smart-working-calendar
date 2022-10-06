@@ -25,7 +25,7 @@ if __name__ == '__main__':
         map(pd.Timestamp, config['closed_days'])
     )
 
-    n_smart = 13
+    n_smart = config['n_smart']
 
     for year in years:
 
@@ -35,7 +35,7 @@ if __name__ == '__main__':
         months = list(range(1, 13))
         for month in months:
             start = pd.Timestamp(f'{year}-{month}-01')
-            if start >= today:
+            if start >= today - MonthEnd(1):
                 end = start + MonthEnd(1)
                 days = pd.date_range(start=start, end=end, freq='B')
                 allowed_days = pd.to_datetime(list(
