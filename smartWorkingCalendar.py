@@ -27,12 +27,12 @@ if __name__ == '__main__':
 
     n_smart = config['n_smart']
 
-    for year in years:
+    for year in years[::-1]:
 
         holidays = list(map(lambda x: pd.Timestamp(x[0]), cal.holidays(year)))
         holidays += closed_days
 
-        months = list(range(1, 13))
+        months = list(range(1, 13))[::-1]
         for month in months:
             start = pd.Timestamp(f'{year}-{month}-01')
             if start >= today - MonthEnd(1):
@@ -43,11 +43,14 @@ if __name__ == '__main__':
                 ))
                 s = allowed_days.size
 
+                fancy_output = [
+                    (str(d.date()), d.day_name()) for d in allowed_days
+                ]
                 out = \
                     f'\n{Style.DIM}' \
                     f'{year}-{start.strftime("%b")}' \
                     f'{Style.RESET_ALL}\n'  \
-                    f'{allowed_days}\n' \
+                    f'{fancy_output}\n' \
                     f'Number of working days: {s}.\n'  \
                     f'{Back.LIGHTRED_EX + Style.DIM}' \
                     f'Days in office: {s - n_smart}.' \
