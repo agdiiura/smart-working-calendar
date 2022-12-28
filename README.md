@@ -1,4 +1,4 @@
-# smartWorkingCalendar
+# smartWorkingCalendar 📅
 
 Just use
 ```bash
