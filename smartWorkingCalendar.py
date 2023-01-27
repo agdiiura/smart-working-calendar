@@ -6,12 +6,14 @@ smartWorkingCalendar.py
 An awesome module to compute the maximum number of days spent in Mordor.
 """
 import json
+
 from pathlib import Path
 
 import pandas as pd
+
 from colorama import Back, Style
-from pandas.tseries.offsets import MonthEnd
 from workalendar.europe import Italy
+from pandas.tseries.offsets import MonthEnd
 
 if __name__ == '__main__':
     cal = Italy()
@@ -27,12 +29,12 @@ if __name__ == '__main__':
 
     n_smart = config['n_smart']
 
-    for year in years[::-1]:
+    for year in reversed(years):
 
         holidays = list(map(lambda x: pd.Timestamp(x[0]), cal.holidays(year)))
         holidays += closed_days
 
-        months = list(range(1, 13))[::-1]
+        months = reversed(list(range(1, 13)))
         for month in months:
             start = pd.Timestamp(f'{year}-{month}-01')
             if start >= today - MonthEnd(1):
