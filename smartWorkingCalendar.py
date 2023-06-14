@@ -25,14 +25,14 @@ if __name__ == '__main__':
 
     closed_days = list(
         map(pd.Timestamp, config['closed_days'])
-    )
+    ) 
 
     n_smart = config['n_smart']
 
     for year in reversed(years):
 
         holidays = list(map(lambda x: pd.Timestamp(x[0]), cal.holidays(year)))
-        holidays += closed_days
+        holidays += closed_days + [pd.Timestamp(f'{year}-06-29')]
 
         months = reversed(list(range(1, 13)))
         for month in months:
