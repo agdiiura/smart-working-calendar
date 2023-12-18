@@ -25,12 +25,13 @@ if __name__ == '__main__':
 
     closed_days = list(
         map(pd.Timestamp, config['closed_days'])
-    ) 
+    )
 
     n_smart = config['n_smart']
 
     for year in reversed(years):
-
+        tot_days = 0
+        bsn_days = 0
         holidays = list(map(lambda x: pd.Timestamp(x[0]), cal.holidays(year)))
         holidays += closed_days + [pd.Timestamp(f'{year}-06-29')]
 
@@ -59,3 +60,9 @@ if __name__ == '__main__':
                     f'{Style.RESET_ALL}'
 
                 print(out)
+
+                tot_days += s - n_smart
+                bsn_days += s
+
+        print(f'\nNumber of bsn days in {year}: {bsn_days}')
+        print(f'Number of remaining days in {year}: {tot_days}')
