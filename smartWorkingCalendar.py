@@ -17,12 +17,12 @@ Note:
     The module assumes the presence of a valid 'config.json' file
     in the same directory.
 """
-
 import json
 import importlib
 
 from pathlib import Path
 
+import click
 import pandas as pd
 
 from colorama import Back, Style
@@ -110,8 +110,19 @@ def compute_working_days(cal: CoreCalendar, year: int, closed_days: list[str], n
     return bsn_days, tot_days
 
 
-if __name__ == '__main__':
-    config_path = Path(__file__).parent / 'config.json'
+@click.command()
+@click.option('--config-path', default=None, help='Configuration file')
+def main(config_path: str | Path | None = None):
+    """Execute the main script"""
+
+    if config_path is None:
+        config_path = Path(__file__).parent / 'config.json'
+
+    if isinstance(config_path, str):
+        config_path = Path(config_path)
+    if not config_path.exists():
+        raise FileNotFoundError(f'config_path {config_path} not exist')
+
     config = load_configuration(config_path)
 
     calendar = config['calendar']
@@ -125,3 +136,7 @@ if __name__ == '__main__':
         _ = compute_working_days(
             cal, year, closed_days, n_smart
         )
+
+
+if __name__ == '__main__':
+    main()
