@@ -1,7 +1,8 @@
 {
   "calendar": "europe.Italy",
+  "extra_holidays": ["06-29"],
   "years": [
-    2024
+    null
   ],
   "closed_days": [
   ],

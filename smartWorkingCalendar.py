@@ -52,7 +52,8 @@ def load_configuration(file_path: str | Path) -> dict:
         return json.load(f)
 
 
-def compute_working_days(cal: CoreCalendar, year: int, closed_days: list[str], n_smart: int) -> tuple[int, int]:
+def compute_working_days(cal: CoreCalendar, year: int, closed_days: list[str],
+                         extra_holidays: list[str], n_smart: int) -> tuple[int, int]:
     """
     Compute the number of working days and remaining days for a given year.
 
@@ -65,6 +66,9 @@ def compute_working_days(cal: CoreCalendar, year: int, closed_days: list[str], n
     :param closed_days: List of additional closed days.
     :type closed_days: List[str]
 
+    :param extra_holidays: List of additional holidays.
+    :type extra_holidays: List[str]
+
     :param n_smart: Number of smart working days.
     :type n_smart: int
 
@@ -74,7 +78,8 @@ def compute_working_days(cal: CoreCalendar, year: int, closed_days: list[str], n
 
     today = pd.Timestamp.now()
     holidays = [pd.Timestamp(x[0]) for x in cal.holidays(year)]
-    holidays += [pd.Timestamp(day) for day in closed_days] + [pd.Timestamp(f'{year}-06-29')]
+    holidays += ([pd.Timestamp(day) for day in closed_days] +
+                 [pd.Timestamp(f'{year}-{eh}') for eh in extra_holidays])
 
     tot_days = 0
     bsn_days = 0
@@ -126,7 +131,11 @@ def main(config_path: str | Path | None = None):
     config = load_configuration(config_path)
 
     calendar = config['calendar']
+    extra_holidays = config['extra_holidays']
     years = config['years']
+    if any(y is None for y in years):
+        years.remove(None)
+        years.append(pd.Timestamp.now().year)
     closed_days = config['closed_days']
     n_smart = config['n_smart']
 
@@ -134,7 +143,11 @@ def main(config_path: str | Path | None = None):
 
     for year in reversed(years):
         _ = compute_working_days(
-            cal, year, closed_days, n_smart
+            cal=cal,
+            year=year,
+            closed_days=closed_days,
+            extra_holidays=extra_holidays,
+            n_smart=n_smart
         )
 
 
